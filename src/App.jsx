@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import LanguageSelector from './components/LanguageSelector';
 import Progress from './components/Progress';
 
 import './App.css'
@@ -12,9 +11,7 @@ function App() {
   const [progressItems, setProgressItems] = useState([]);
 
   // Inputs and outputs
-  const [input, setInput] = useState('I love walking my dog.');
-  const [sourceLanguage, setSourceLanguage] = useState('eng_Latn');
-  const [targetLanguage, setTargetLanguage] = useState('fra_Latn');
+  const [input, setInput] = useState('Article about war in Syria');
   const [output, setOutput] = useState('');
 
   // Create a reference to the worker object.
@@ -68,7 +65,7 @@ function App() {
           break;
 
         case 'complete':
-          // Generation complete: re-enable the "Translate" button
+          // Generation complete: re-enable the "Search" button
           setDisabled(false);
           break;
       }
@@ -81,33 +78,26 @@ function App() {
     return () => worker.current.removeEventListener('message', onMessageReceived);
   });
 
-  const translate = () => {
+  const search = () => {
     setDisabled(true);
     worker.current.postMessage({
       text: input,
-      src_lang: sourceLanguage,
-      tgt_lang: targetLanguage,
     });
   }
 
   return (
     <>
-      <h1>Transformers.js</h1>
-      <h2>ML-powered multilingual translation in React!</h2>
+      <h1>Uqbar Librarian</h1>
+      <h2>P2P Document Search Powered by ML</h2>
 
       <div className='container'>
-        <div className='language-container'>
-          <LanguageSelector type={"Source"} defaultLanguage={"eng_Latn"} onChange={x => setSourceLanguage(x.target.value)} />
-          <LanguageSelector type={"Target"} defaultLanguage={"fra_Latn"} onChange={x => setTargetLanguage(x.target.value)} />
-        </div>
-
         <div className='textbox-container'>
           <textarea value={input} rows={3} onChange={e => setInput(e.target.value)}></textarea>
           <textarea value={output} rows={3} readOnly></textarea>
         </div>
       </div>
 
-      <button disabled={disabled} onClick={translate}>Translate</button>
+      <button disabled={disabled} onClick={search}>Search</button>
 
       <div className='progress-bars-container'>
         {ready === false && (
