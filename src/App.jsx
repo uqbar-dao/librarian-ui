@@ -66,6 +66,23 @@ function App() {
 
         case 'complete':
           // Generation complete: re-enable the "Search" button
+          console.log('complete', JSON.stringify(e.data.output));
+          fetch('/librarian/vector', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify('foobar') //{ text: e.data.output }
+          })
+          .then(res => {
+            console.log('res', res)
+            setOutput(res.statusText)
+          })
+          // .then(res => res.json())
+          // .then(res => {
+          //   console.log('res', res)
+          //   setOutput(res.json())
+          // });
           setDisabled(false);
           break;
       }
@@ -92,13 +109,12 @@ function App() {
 
       <div className='container'>
         <div className='textbox-container'>
-          <textarea value={input} rows={3} onChange={e => setInput(e.target.value)}></textarea>
-          <textarea value={output} rows={3} readOnly></textarea>
+          <input value={input} rows={3} onChange={e => setInput(e.target.value)}></input>
+          <button disabled={disabled} onClick={search}>Search</button>
         </div>
       </div>
-
-      <button disabled={disabled} onClick={search}>Search</button>
-
+      {/* TODO better output */}
+      <p>{output}</p>
       <div className='progress-bars-container'>
         {ready === false && (
           <label>Loading models... (only run once)</label>

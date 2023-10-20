@@ -35,7 +35,7 @@ select {
   cursor: pointer;
 }
 
-textarea {
+input {
   padding: 0.6em;
 }
 
@@ -50,7 +50,7 @@ button[disabled] {
 }
 
 select,
-textarea,
+input,
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -61,15 +61,15 @@ button {
 }
 
 select:hover,
-textarea:hover,
+input:hover,
 button:not([disabled]):hover {
   border-color: #646cff;
 }
 
 select:focus,
 select:focus-visible,
-textarea:focus,
-textarea:focus-visible,
+input:focus,
+input:focus-visible,
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
