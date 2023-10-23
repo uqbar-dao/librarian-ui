@@ -12,7 +12,7 @@ function App() {
 
   // Inputs and outputs
   const [input, setInput] = useState('Article about war in Syria');
-  const [output, setOutput] = useState('');
+  const [output, setOutput] = useState([]);
 
   // Create a reference to the worker object.
   const worker = useRef(null);
@@ -58,15 +58,11 @@ function App() {
           // Pipeline ready: the worker is ready to accept messages.
           setReady(true);
           break;
-
-        case 'update':
-          // Generation update: update the output text.
-          setOutput(e.data.output);
-          break;
-
+        
         case 'complete':
           // Generation complete: re-enable the "Search" button
-          console.log('complete', JSON.stringify(e.data.output));
+          // console.log('complete', JSON.stringify(e.data.output));
+          console.log('complete')
           fetch('/librarian/vector', {
             method: 'POST',
             headers: {
@@ -76,13 +72,14 @@ function App() {
               "namespace": "default",
               "includeValues": false,
               "includeMetadata": true,
-              "topK": 1,
+              "topK": 10,
               "vector": Object.values(e.data.output)
             })
           })
+          .then(res => res.json())
           .then(res => {
-            console.log('res', res)
-            setOutput(res.statusText)
+            console.log('res', res.matches)
+            setOutput(res.matches)
           })
           setDisabled(false);
           break;
@@ -114,8 +111,28 @@ function App() {
           <button disabled={disabled} onClick={search}>Search</button>
         </div>
       </div>
-      {/* TODO better output */}
-      <p>{output}</p>
+      {/* {
+        output && output.map((article, i) => (
+          // <p key={i}>{JSON.stringify(article)}</p>
+          <div key={i} className='article'>
+            <a href={article.metadata.url}>
+              <h1 className='article-title'>{article.metadata.title}</h1>
+            </a>
+            <h3 className='article-author'>{article.metadata.author}</h3>
+            <p className='article-content'>{article.metadata.article}</p>
+          </div>
+        ))
+      } */}
+      <div className="iframe-grid">
+        {output && output.map((article, i) => (
+          <iframe
+            key={i}
+            title={article.metadata.title}
+            src={article.metadata.url}
+            className="iframe-item"
+          ></iframe>
+        ))}
+      </div>
       <div className='progress-bars-container'>
         {ready === false && (
           <label>Loading models... (only run once)</label>
