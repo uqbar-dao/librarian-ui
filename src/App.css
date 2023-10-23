@@ -14,7 +14,6 @@
   display: flex;
   justify-content: center;
   gap: 20px;
-  width: 800px;
 }
 
 .textbox-container>input, .language-selector {
@@ -100,18 +99,47 @@
     .article-content {
       margin-top: 10px; /* Add space above the content */
       line-height: 1.4; /* Adjust line height for content */
+      text-align: justify;
     }
   }
 
-  .iframe-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust the width as needed */
-    grid-gap: 20px; /* Adjust the gap between iframes */
+  code {
+    color: darkblue;
   }
   
-  .iframe-item {
-    width: 100%;
-    height: 300px; /* Adjust the height as needed */
-    border: 1px solid #ddd; /* Add a border for each iframe */
+  #loader {
+    display: inline-block;
+    position: relative;
+    width: 48px;
+    height: 48px;
+    margin-top: 16px;
   }
-  
+  #loader div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    margin: 6px;
+    border: 6px solid black;
+    border-radius: 50%;
+    animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: darkblue transparent transparent transparent;
+  }
+  #loader div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  #loader div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  #loader div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes loader {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }

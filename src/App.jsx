@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Progress from './components/Progress';
+import Loader from './components/Loader';
 
 import './App.css'
 
@@ -11,7 +12,7 @@ function App() {
   const [progressItems, setProgressItems] = useState([]);
 
   // Inputs and outputs
-  const [input, setInput] = useState('Article about war in Syria');
+  const [input, setInput] = useState('');
   const [output, setOutput] = useState([]);
 
   // Create a reference to the worker object.
@@ -62,7 +63,6 @@ function App() {
         case 'complete':
           // Generation complete: re-enable the "Search" button
           // console.log('complete', JSON.stringify(e.data.output));
-          console.log('complete')
           fetch('/librarian/vector', {
             method: 'POST',
             headers: {
@@ -80,8 +80,8 @@ function App() {
           .then(res => {
             console.log('res', res.matches)
             setOutput(res.matches)
+            setDisabled(false);
           })
-          setDisabled(false);
           break;
       }
     };
@@ -103,35 +103,19 @@ function App() {
   return (
     <>
       <h1>Uqbar Librarian</h1>
-      <h2>P2P Document Search Powered by ML</h2>
-
-      <div className='container'>
-        <div className='textbox-container'>
-          <input value={input} rows={3} onChange={e => setInput(e.target.value)}></input>
+      <h2>Searching <code>drew.uq</code>&apos;s <code>news</code> database</h2>
+      <div className='container' style={{minWidth: '700px'}}>
+        <div className='textbox-container' style={{marginBottom: '0'}}>
+          <input value={input} onChange={e => setInput(e.target.value)} placeholder='query for articles here'></input>
           <button disabled={disabled} onClick={search}>Search</button>
         </div>
+        {/* <h6 style={{marginTop: '0', marginBottom: '0', color: 'gray'}}>P2P Document Search powered by AI</h6> */}
       </div>
-      {/* {
-        output && output.map((article, i) => (
-          // <p key={i}>{JSON.stringify(article)}</p>
-          <div key={i} className='article'>
-            <a href={article.metadata.url}>
-              <h1 className='article-title'>{article.metadata.title}</h1>
-            </a>
-            <h3 className='article-author'>{article.metadata.author}</h3>
-            <p className='article-content'>{article.metadata.article}</p>
-          </div>
-        ))
-      } */}
-      <div className="iframe-grid">
-        {output && output.map((article, i) => (
-          <iframe
-            key={i}
-            title={article.metadata.title}
-            src={article.metadata.url}
-            className="iframe-item"
-          ></iframe>
-        ))}
+      { disabled && <Loader/> }
+      <div className='container'>
+        {
+          output && output.map((article, i) => <Article key={i} article={article} />)
+        }
       </div>
       <div className='progress-bars-container'>
         {ready === false && (
@@ -145,6 +129,32 @@ function App() {
       </div>
     </>
   )
+}
+
+function Article(props) {
+  const { key, article } = props;
+  const [expanded, setExpanded] = useState(false);
+
+  article.metadata.truncated = `${article.metadata.article.slice(0, 200)}...`
+
+  return (
+    <div key={key} className='article'>
+      <a href={article.metadata.url}>
+        <h1 className='article-title'>{article.metadata.title}</h1>
+      </a>
+      <h3 className='article-author'>
+        {article.metadata.author} | {article.metadata.publication}
+      </h3>
+      <p className='article-content'>
+        {
+          expanded? article.metadata.article : article.metadata.truncated
+        }
+      </p>
+      <span className='read-more-link' onClick={() => setExpanded(!expanded)}>
+        {expanded? 'Collapse' : 'Read More'}
+      </span>
+    </div>
+  );
 }
 
 export default App
