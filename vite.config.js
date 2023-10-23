@@ -27,10 +27,10 @@ export default defineConfig({
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
             extType = 'img';
           }
-          return `librarian/static/[name][extname]`;
+          return `[name][extname]`;
         },
-        chunkFileNames: 'librarian/static/[name].js',
-        entryFileNames: 'librarian/static/[name].js',
+        chunkFileNames: '[name].js',
+        entryFileNames: '[name].js',
       }
     }
 

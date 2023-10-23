@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     if (!worker.current) {
       // Create the worker if it does not yet exist.
-      worker.current = new Worker(new URL('./worker.js', import.meta.url), {
+      worker.current = new Worker(`${window.location.origin}/librarian/worker.js`, {
         type: 'module'
       });
     }
@@ -72,17 +72,18 @@ function App() {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify('foobar') //{ text: e.data.output }
+            body: JSON.stringify({
+              "namespace": "default",
+              "includeValues": false,
+              "includeMetadata": true,
+              "topK": 1,
+              "vector": Object.values(e.data.output)
+            })
           })
           .then(res => {
             console.log('res', res)
             setOutput(res.statusText)
           })
-          // .then(res => res.json())
-          // .then(res => {
-          //   console.log('res', res)
-          //   setOutput(res.json())
-          // });
           setDisabled(false);
           break;
       }
